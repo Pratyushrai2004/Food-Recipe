@@ -4,8 +4,9 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import * as RecipeAPI from './recipe-api';
-
+import {PrismaClient} from "@prisma/client"
 const app = express();
+const prismaClient = new PrismaClient();
 
 app.use(express.json());
 app.use(cors());
@@ -25,6 +26,26 @@ app.get("/api/recipes/search", async (req, res) => {
         }
     }
 });
+
+app.get("/api/recipes/:recipeId/summary",async(req, res)=>{
+    const recipeId = req.params.recipeId;
+    const results = await RecipeAPI.getRecipeSummary(recipeId);
+    return res.json(results);
+})
+
+app.post("/api/recipes/favourite", async(req, res)=>{
+    const recipeId = req.body.recipeId;
+
+    try {
+        const favouriteRecipe = await prismaClient.favouriteRecipes.create({
+            data: {recipeId:recipeId}
+        });
+        return res.status(201).json(favouriteRecipe)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({error: 'Oops, something went wrong'})
+    }
+})
 
 app.listen(5000, () => {
     console.log("Server running on localhost:5000");
