@@ -44,6 +44,16 @@
   max-width: 500px;
 }
 
+.tabs{
+  display: flex;
+  gap: 2em;
+  cursor: pointer;
+
+}
+.close-btn{
+  cursor: pointer;
+}
+
 /* Animations */
 @keyframes fadeIn {
   to {
@@ -56,4 +66,12 @@
     opacity: 1;
     transform: translate(-50%, -50%);
   }
+}
+
+.recipe-card-title{
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+
+
 }

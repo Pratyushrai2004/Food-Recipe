@@ -47,6 +47,38 @@ app.post("/api/recipes/favourite", async(req, res)=>{
     }
 })
 
+app.get('/api/recipes/favourite', async (req, res) => {
+    try {
+      const recipes = await prismaClient.favouriteRecipes.findMany();
+      const recipeIds = recipes.map((recipe) => recipe.recipeId.toString());
+  
+      const favourites = await RecipeAPI.getFavouriteRecipesByIDs(recipeIds);
+      return res.json(favourites);
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.status(500).json({ error: error.message });
+      } else {
+        return res.status(500).json({ error: 'Unknown error occurred' });
+      }
+    }
+  });
+
+  app.delete("/api/recipes/favourite" , async(req, res)=>{
+    const recipeId = req.body.recipeId;
+
+
+    try {
+        await prismaClient.favouriteRecipes.delete({
+            where:{
+                recipeId: recipeId
+            }
+        })
+        return res.status(204).send()
+    } catch (error) {
+        return res.status(500).json({error: "Oops , something went wrong"});
+        
+    }
+  })
 app.listen(5000, () => {
     console.log("Server running on localhost:5000");
 });
